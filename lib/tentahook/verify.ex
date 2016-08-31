@@ -20,7 +20,11 @@ defmodule Tentahook.Verify do
         conn
       end
     else
-      conn
+      if conn.private[:unsafe] do
+        conn
+      else
+        conn |> Plug.Conn.send_resp(401, "Unauthorized") |> Plug.Conn.halt
+      end
     end
   end
 
