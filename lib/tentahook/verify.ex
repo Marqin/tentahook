@@ -10,7 +10,9 @@ defmodule Tentahook.Verify do
       Plug.Conn.get_req_header(conn, "x-hub-signature")
       |> List.to_string |> String.slice(5..-1)
 
-    secrets = conn.private[:secrets]
+    secrets = Tentahook.Conf.get(:secrets)
+
+    IO.inspect secrets
 
     if secrets && secrets != [] do
       if check_loop(raw_body, sig, secrets) do
@@ -19,7 +21,8 @@ defmodule Tentahook.Verify do
         conn |> Plug.Conn.send_resp(401, "Unauthorized") |> Plug.Conn.halt
       end
     else
-      if conn.private[:unsafe] do
+      unsafe = Tentahook.Conf.get(:unsafe)
+      if unsafe do
         conn
       else
         conn |> Plug.Conn.send_resp(401, "Unauthorized") |> Plug.Conn.halt

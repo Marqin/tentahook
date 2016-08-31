@@ -26,10 +26,11 @@ defmodule Tentahook.Handler do
       nil ->
         false
       _ ->
+        handler = Tentahook.Conf.get(:handler)
         # handling webhook data is side-effect for our server
         # so we run it out of our supervision tree
         # IDEA: make another supervisor for hooks?
-        Task.start(fn -> handle_data(conn.private[:handler], data) end)
+        Task.start(fn -> handle_data(handler, data) end)
         true
     end
   end
