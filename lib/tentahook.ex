@@ -7,7 +7,7 @@ defmodule Tentahook do
     end
   end
 
-  def start_link(tentahook_opts = %{handler: handler}, cowboy_opts) do
+  def start_link(tentahook_opts = %{handler: _handler}, cowboy_opts) do
     Agent.start_link(fn -> tentahook_opts end, name: Tentahook)
 
     child = Plug.Adapters.Cowboy.child_spec(:http, Tentahook.Router, [], cowboy_opts)
@@ -15,7 +15,7 @@ defmodule Tentahook do
     Supervisor.start_link [child], opts
   end
 
-  def reset_conf(tentahook_opts = %{handler: handler}) do
+  def reset_conf(tentahook_opts = %{handler: _handler}) do
     Tentahook.Conf.reset(tentahook_opts)
   end
 
