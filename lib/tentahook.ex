@@ -7,10 +7,10 @@ defmodule Tentahook do
     end
   end
 
-  def start_link(tentahook_opts = %{handler: handler}) do
+  def start_link(tentahook_opts = %{handler: handler}, cowboy_opts) do
     Agent.start_link(fn -> tentahook_opts end, name: Tentahook)
 
-    child = Plug.Adapters.Cowboy.child_spec(:http, Tentahook.Router, [], [])
+    child = Plug.Adapters.Cowboy.child_spec(:http, Tentahook.Router, [], cowboy_opts)
     opts = [strategy: :one_for_one]
     Supervisor.start_link [child], opts
   end
