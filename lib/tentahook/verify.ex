@@ -8,13 +8,17 @@ defmodule Tentahook.Verify do
 
     secret_key = Application.get_env(:tentahook, :secret)
 
-    hash = :crypto.hmac(:sha, secret_key, raw_body) |> Base.encode16 |> String.downcase
-    sig =
-      Plug.Conn.get_req_header(conn, "x-hub-signature")
-      |> List.to_string |> String.slice(5..-1)
+    if secret_key && secret_key != "" do
+      hash = :crypto.hmac(:sha, secret_key, raw_body) |> Base.encode16 |> String.downcase
+      sig =
+        Plug.Conn.get_req_header(conn, "x-hub-signature")
+        |> List.to_string |> String.slice(5..-1)
 
-    if hash != sig do
-      conn |> Plug.Conn.send_resp(401, "Unauthorized") |> Plug.Conn.halt
+      if hash != sig do
+        conn |> Plug.Conn.send_resp(401, "Unauthorized") |> Plug.Conn.halt
+      else
+        conn
+      end
     else
       conn
     end
