@@ -11,8 +11,7 @@ defmodule Tentahook.Mixfile do
   end
 
   def application do
-    [applications: [:cowboy, :plug, :logger],
-     env: [secret: ""]]
+    [applications: [:cowboy, :plug, :logger]]
   end
 
   defp deps do

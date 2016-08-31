@@ -6,18 +6,17 @@ defmodule Tentahook.Verify do
     {:ok, raw_body, conn} = Plug.Conn.read_body(conn)
     conn = Plug.Conn.put_private(conn, :raw_body, raw_body)
 
-    secret_key = Application.get_env(:tentahook, :secret)
+    sig =
+      Plug.Conn.get_req_header(conn, "x-hub-signature")
+      |> List.to_string |> String.slice(5..-1)
 
-    if secret_key && secret_key != "" do
-      hash = :crypto.hmac(:sha, secret_key, raw_body) |> Base.encode16 |> String.downcase
-      sig =
-        Plug.Conn.get_req_header(conn, "x-hub-signature")
-        |> List.to_string |> String.slice(5..-1)
+    secrets = conn.private[:secrets]
 
-      if hash != sig do
-        conn |> Plug.Conn.send_resp(401, "Unauthorized") |> Plug.Conn.halt
-      else
+    if secrets && secrets != [] do
+      if check_loop(raw_body, sig, secrets) do
         conn
+      else
+        conn |> Plug.Conn.send_resp(401, "Unauthorized") |> Plug.Conn.halt
       end
     else
       if conn.private[:unsafe] do
@@ -26,6 +25,23 @@ defmodule Tentahook.Verify do
         conn |> Plug.Conn.send_resp(401, "Unauthorized") |> Plug.Conn.halt
       end
     end
+  end
+
+  def check_loop(_body, _sig, []) do
+    false
+  end
+
+  def check_loop(body, sig, [secret|tail]) do
+    if check(body, sig, secret) do
+      true
+    else
+      check_loop(body, sig, tail)
+    end
+  end
+
+  def check(body, sig, secret) do
+    hash = :crypto.hmac(:sha, secret, body) |> Base.encode16 |> String.downcase
+    sig == hash
   end
 
 end
