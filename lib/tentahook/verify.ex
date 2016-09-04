@@ -1,8 +1,9 @@
 defmodule Tentahook.Verify do
+  @moduledoc false
 
   def init([]), do: false
 
-  def call(conn, _) do
+  def call(conn, _opts) do
     {:ok, raw_body, conn} = Plug.Conn.read_body(conn)
     conn = Plug.Conn.put_private(conn, :raw_body, raw_body)
 

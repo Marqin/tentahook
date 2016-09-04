@@ -1,4 +1,5 @@
 defmodule Tentahook.Conf do
+  @moduledoc false
 
   @spec get(atom) :: any
   def get(key) do

@@ -1,4 +1,5 @@
 defmodule Tentahook.Handler do
+  @moduledoc false
 
   def handle(conn) do
     raw_body = conn.private[:raw_body]

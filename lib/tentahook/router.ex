@@ -1,4 +1,6 @@
 defmodule Tentahook.Router do
+  @moduledoc false
+
   use Plug.Router
 
   plug Tentahook.Verify
