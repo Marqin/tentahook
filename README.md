@@ -2,6 +2,8 @@
 
 Elixir handler for GitHub Webhooks.
 
+[Documentation](https://hexdocs.pm/tentahook/)
+
 ## Installation
 
   1. Add `tentahook` to your list of dependencies in `mix.exs`:
@@ -22,7 +24,8 @@ Elixir handler for GitHub Webhooks.
 
 ## Usage
 
-Check this [example](https://github.com/Marqin/tentahook_example).
+Check this [example](https://github.com/Marqin/tentahook_example) and
+[documentation](https://hexdocs.pm/tentahook/).
 
 To start:
 ```elixir
